@@ -7,17 +7,21 @@ module.exports = () => {
   router.get('/registration', (req, res) => res.render('users/registration', { success: req.query.success }));
 
   router.post('/registration', async(req, res, next) => {
-    const { username, email, password } = req.body;
     try {
+      const { username, email, password } = req.body;
       const user = new UserModel({
+        // username: req.body.username,
+        // email: req.body.email,
+        // password: req.body.password
         username,
         email,
         password
       })
       const savedUser = await user.save();
-      if (savedUser) return res.redirect('/user/registration?success=true')
+      if (savedUser) return res.redirect('/users/registration?success=true')
+      return next(new Error('Failed to save user due to unknown reasons'))
     } catch (error) {
-      
+      return next(error)
     }
   })
 
