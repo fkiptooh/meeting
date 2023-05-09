@@ -10,6 +10,15 @@ module.exports = () => {
     failureRedirect: '/users/login?error=true',
   }));
   router.get('/login', (req, res) => res.render('users/login', { error: req.query.error }));
+  router.get('/logout', (req, res) => {
+    req.logout(function(err) {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect('/');
+    });
+  });
+  
   router.get('/registration', (req, res) => res.render('users/registration', { success: req.query.success }));
 
   router.post('/registration', async(req, res, next) => {
