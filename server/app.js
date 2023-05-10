@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet')
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const compression = require('compression');
@@ -15,6 +16,7 @@ const AvatarService = require('./services/AvatarService');
 
 module.exports = (config) => {
   const app = express();
+  app.use(helmet());
   app.use(compression());
   const speakers = new SpeakerService(config.data.speakers);
   const feedback = new FeedbackService(config.data.feedback);
@@ -68,7 +70,7 @@ module.exports = (config) => {
     res.locals.message = err.message;
     const status = err.status || 500; // If no status is provided, let's assume it's a 500
     res.locals.status = status;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    res.locals.error = req.app.get('env') === 'production' ? err : {};
     res.status(status);
     res.render('error');
   });

@@ -12,9 +12,9 @@ module.exports = {
   deploy: {
     production: {
       user: 'nodejs',
-      host: '<CHANGE_TO_YOUR_HOST>',
+      host: 'https://vercel.com/fkiptooh/meeting',
       ref: 'origin/master',
-      repo: '<CHANGE_TO_YOUR_GITHUB_REPO>',
+      repo: 'https://github.com/fkiptooh/meeting.git',
 
       // Make sure this directory exists on your server or change this entry to match your directory structure
       path: '/home/nodejs/deploy',
