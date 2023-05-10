@@ -30,6 +30,9 @@ const UserSchema = mongoose.Schema({
       index: { unique: true },
       minlength: 8,
     },
+    avatar: {
+      type: String,
+    },
 }, { timestamps: true });
 
 UserSchema.pre('save', async function preSave(next){

@@ -1,6 +1,7 @@
 const express = require('express');
 const UserModel = require('../../models/UserModel');
 const passport = require('passport')
+const middlewares = require('../middlewares');
 
 const router = express.Router();
 
@@ -9,7 +10,8 @@ function redirectIfLoggedIn(req, res, next){
   return next()
 }
 
-module.exports = () => {
+module.exports = (params) => {
+  const { avatars } = params;
   router.post('/login', passport.authenticate('local', {
     successRedirect: '/',
     failureRedirect: '/users/login?error=true',
@@ -26,18 +28,24 @@ module.exports = () => {
   
   router.get('/registration', redirectIfLoggedIn, (req, res) => res.render('users/registration', { success: req.query.success }));
 
-  router.post('/registration', async(req, res, next) => {
+  router.post('/registration', middlewares.upload.single('avatar'), middlewares.handleAvatar(avatars), async(req, res, next) => {
     try {
       const { username, email, password } = req.body;
       const user = new UserModel({
         username,
         email,
         password
-      })
+      });
+      if (req.file && req.file.storedFilename) {
+        user.avatar = req.file.storedFilename;
+      }
       const savedUser = await user.save();
       if (savedUser) return res.redirect('/users/registration?success=true')
       return next(new Error('Failed to save user due to unknown reasons'))
     } catch (error) {
+      if (req.file && req.file.storedFilename) {
+        await avatars.delete(req.file.storedFilename);
+      }
       return next(error)
     }
   })
